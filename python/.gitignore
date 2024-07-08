@@ -1,2 +1,7 @@
 test.py
 data.json
+
+.env
+.env.local
+
+__pycache__/

@@ -85,9 +85,9 @@ class AllCourses:
 
 def timeToSession(time: str) -> str:
     sessionToTime = {
-        "0": ["07:10", "08:00"],
-        "1": ["08:10", "09:00"],
-        "2": ["09:10", "10:00"],
+        "0": ["7:10", "8:00"],
+        "1": ["8:10", "9:00"],
+        "2": ["9:10", "10:00"],
         "3": ["10:20", "11:10"],
         "4": ["11:20", "12:10"],
         "5": ["12:20", "13:10"],
@@ -103,7 +103,7 @@ def timeToSession(time: str) -> str:
     }
     try:
         for key, value in sessionToTime.items():
-            if value[0] <= time < value[1]:
+            if time == value[0] or time == value[1]:
                 return key
     except KeyError:
         return "N/A"
@@ -128,6 +128,13 @@ def getDay(day: str) -> int:
         "(四)": 4,
         "(五)": 5,
         "(六)": 6,
+        "日": 0,
+        "一": 1,
+        "二": 2,
+        "三": 3,
+        "四": 4,
+        "五": 5,
+        "六": 6,
     }
     try:
         return dayToNum[day]
@@ -185,9 +192,9 @@ def crawlPage(url: str, allCourseInfo: AllCourses) -> None:
                 allCourseInfo.addCourse(course)
 
 
-def parse_schedule(schedule_str) -> list:
+def parse_schedule(schedule_str):
     week_pattern = re.compile(r".[0-9,]*週")
-    time_pattern = re.compile(r"\((.)\) (\d{2}:\d{2})~(\d{2}:\d{2})")
+    time_pattern = re.compile(r"\((.)\) (\d{1,2}:\d{2})~(\d{1,2}:\d{2})")
 
     schedules = []
 
@@ -206,7 +213,7 @@ def parse_schedule(schedule_str) -> list:
         schedules.append(
             {
                 "weeks": weeks,
-                "day": day,
+                "day": getDay(day),
                 "start_time": timeToSession(start_time),
                 "end_time": timeToSession(end_time),
             }
