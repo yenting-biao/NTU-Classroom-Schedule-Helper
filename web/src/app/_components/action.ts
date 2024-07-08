@@ -3,6 +3,8 @@ import { Course } from "@/lib/types/db";
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { courseSchema } from "@/lib/validators/courses";
 
+export const dynamic = "force-dynamic";
+
 const client = new MongoClient(privateEnv.MONGO_URI, {
   serverApi: {
     version: ServerApiVersion.v1,
