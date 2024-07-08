@@ -62,6 +62,7 @@ export default function Courses({
           搜尋
         </button>
       </div>
+      <p className="ml-1">找到 {courses.length} 筆資料</p>
       <table className="table-auto">
         <thead>
           <tr className="border-b sticky top-0 dark:bg-[rgb(25,25,25)] bg-slate-100">
@@ -78,7 +79,10 @@ export default function Courses({
           {courses
             .slice((page - 1) * courseNumPerPage, page * courseNumPerPage)
             .map((course, i) => (
-              <tr key={i} className="border-b hover:bg-gray-800">
+              <tr
+                key={i}
+                className="border-b hover:bg-slate-200 dark:hover:bg-gray-800"
+              >
                 <td className={`${padding}`}>{course.name}</td>
                 <td className={`${padding}`}>
                   <Link
@@ -246,6 +250,7 @@ const DepartmentSelect = ({
         ref={departmentRef}
         onChange={handleSearch}
       >
+        <option value="">全部</option>
         <option value="0020">0020 體育室 </option>
         <option value="0030">0030 軍訓室 </option>
         <option value="0040">0040 外語教學暨資源中心 </option>
