@@ -11,6 +11,7 @@ const client = new MongoClient(privateEnv.MONGO_URI, {
     strict: true,
     deprecationErrors: true,
   },
+  maxPoolSize: 10,
 });
 
 export const getAllCourseData = async () => {
