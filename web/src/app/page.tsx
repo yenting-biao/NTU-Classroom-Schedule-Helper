@@ -1,6 +1,8 @@
 import { getAllCourseData } from "@/app/_components/action";
 import Courses from "@/app/_components/Courses";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const courses = await getAllCourseData();
 
