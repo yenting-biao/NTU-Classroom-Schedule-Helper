@@ -20,7 +20,6 @@ export default function Courses({
     const courseName = courseNameRef.current?.value;
     const instructor = instructorRef.current?.value;
     const department = departmentRef.current?.value;
-    console.log("department", department);
     setCourses(
       origCourses.filter(
         (course) =>
@@ -43,13 +42,13 @@ export default function Courses({
         />
         <SearchBox
           label="課程名稱"
-          ref={courseNameRef}
+          searchRef={courseNameRef}
           placeholder="搜尋課程名稱"
           handleSearch={handleSearch}
         />
         <SearchBox
           label="授課教師"
-          ref={instructorRef}
+          searchRef={instructorRef}
           placeholder="搜尋授課教師"
           handleSearch={handleSearch}
         />
@@ -202,12 +201,12 @@ const TimeComponent = ({ time }: { time: CourseTime }) => {
 
 const SearchBox = ({
   label,
-  ref,
+  searchRef,
   placeholder,
   handleSearch,
 }: {
   label: string;
-  ref: React.RefObject<HTMLInputElement>;
+  searchRef: React.RefObject<HTMLInputElement>;
   placeholder: string;
   handleSearch: () => void;
 }) => {
@@ -221,7 +220,7 @@ const SearchBox = ({
         id="search"
         placeholder={placeholder}
         className="p-2 bg-gray-200 dark:bg-gray-800 rounded-lg w-full"
-        ref={ref}
+        ref={searchRef}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             handleSearch();
@@ -246,7 +245,7 @@ const DepartmentSelect = ({
       </label>
       <select
         id="search"
-        className="p-2 bg-gray-200 dark:bg-gray-800 rounded-lg w-full"
+        className="p-2.5 bg-gray-200 dark:bg-gray-800 rounded-lg w-full"
         ref={departmentRef}
         onChange={handleSearch}
       >
