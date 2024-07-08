@@ -235,7 +235,8 @@ def main():
     with open("courses.csv", "w") as f:
         f.write("ID,CourseName,Instructor,Building,Time\n")
         for i in p:
-            f.write(f"{i.id},{i.name},{i.instructor},{i.building},{i.time}\n")
+            newTime = i.time.replace(",", "+")
+            f.write(f"{i.id},{i.name},{i.instructor},{i.building},{newTime}\n")
 
 
 if __name__ == "__main__":
