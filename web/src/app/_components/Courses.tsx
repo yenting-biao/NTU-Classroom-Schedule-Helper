@@ -11,12 +11,13 @@ export default function Courses({
   padding: string;
 }) {
   const courseNumPerPage = 20;
+  const maxPage = Math.ceil(courses.length / courseNumPerPage);
   const [page, setPage] = useState(1);
   return (
     <>
       <table className="table-auto">
         <thead>
-          <tr className="border-b sticky top-0 dark:bg-gray-900">
+          <tr className="border-b sticky top-0 dark:bg-[rgb(25,25,25)] bg-slate-100">
             <th className={`text-left ${padding}`}>課程名稱</th>
             <th className={`text-left ${padding} md:whitespace-nowrap`}>
               課程識別碼與班次
@@ -59,7 +60,11 @@ export default function Courses({
         <button
           onClick={() => setPage(page - 1)}
           disabled={page === 1}
-          className="p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+          className={`p-2 bg-gray-200 dark:bg-gray-800 ${
+            page === 1
+              ? "cursor-not-allowed"
+              : "hover:bg-gray-300 dark:hover:bg-gray-700"
+          } rounded-lg`}
         >
           上一頁
         </button>
@@ -68,14 +73,14 @@ export default function Courses({
           <select
             value={page}
             onChange={(e) => setPage(parseInt(e.target.value))}
-            className="p-1 bg-gray-100 dark:bg-gray-800"
+            className="p-1 bg-gray-200 dark:bg-gray-800 rounded-md"
           >
             {Array.from({
               length: Math.ceil(courses.length / courseNumPerPage),
             })
               .map((_, i) => i + 1)
               .map((i) => (
-                <option key={i} value={i}>
+                <option key={i} value={i} className="rounded-sm">
                   {i}
                 </option>
               ))}
@@ -84,8 +89,12 @@ export default function Courses({
         </p>
         <button
           onClick={() => setPage(page + 1)}
-          disabled={page === Math.ceil(courses.length / courseNumPerPage)}
-          className="p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+          disabled={page === maxPage}
+          className={`p-2 bg-gray-200 dark:bg-gray-800 ${
+            page === maxPage
+              ? "cursor-not-allowed"
+              : "hover:bg-gray-300 dark:hover:bg-gray-700"
+          } rounded-lg`}
         >
           下一頁
         </button>
