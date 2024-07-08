@@ -3,6 +3,7 @@ import { courseSchema } from "@/lib/validators/courses";
 import { client } from "@/db/client";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export const getAllCourseData = async () => {
   "use server";
