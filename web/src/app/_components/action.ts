@@ -11,6 +11,7 @@ export const getAllCourseData = async () => {
     const db = client.db("ntu-class-schedule");
     const collection = db.collection<Course>("courses");
     const courses = await collection.find().toArray();
+    console.log("courses", courses);
 
     // Use zod to validate the data
     const validatedCourses = courses.map((course) =>
