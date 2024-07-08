@@ -9,7 +9,7 @@ export default async function Home() {
 
   const padding = "p-5";
   return (
-    <main className="flex min-h-screen flex-col p-5 gap-5">
+    <main className="flex flex-col p-5 gap-5">
       <Courses origCourses={courses} padding={padding} />
     </main>
   );
