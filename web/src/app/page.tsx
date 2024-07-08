@@ -47,7 +47,7 @@ export default async function Home() {
       {courses.map((course, i) => (
         <div
           key={i}
-          className="p-5 border-2 border-gray-300 rounded-xl flex gap-3"
+          className="p-5 border-2 border-gray-300 rounded-xl flex flex-col md:flex-row gap-3"
         >
           <h2 className="text-xl font-bold">{course.name}</h2>
           <p>{course.id}</p>

@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="p-5 flex items-end gap-2">
+        <div className="p-5 flex flex-col items-center md:flex-row md:items-end gap-2">
           <h1 className="text-4xl font-bold">台大教室課表小幫手</h1>
           <p className="text-lg">讓你輕鬆查詢教室課表上的課程</p>
         </div>
@@ -25,6 +25,8 @@ export default function RootLayout({
           更新時間：2024/07/08 17:00
           <br />
           免責聲明：此網頁僅為個人專案，課程資料僅供參考，應以臺大課程網站之公告為準。
+          <br />
+          目前淺色模式有點小問題，請使用深色模式以獲得最佳體驗。
         </div>
         {children}
       </body>
