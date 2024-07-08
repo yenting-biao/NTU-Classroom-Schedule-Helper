@@ -1,18 +1,8 @@
-import { privateEnv } from "@/lib/env/private";
 import { Course } from "@/lib/types/db";
-import { MongoClient, ServerApiVersion } from "mongodb";
 import { courseSchema } from "@/lib/validators/courses";
+import { client } from "@/db/client";
 
 export const dynamic = "force-dynamic";
-
-const client = new MongoClient(privateEnv.MONGO_URI, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-  maxPoolSize: 10,
-});
 
 export const getAllCourseData = async () => {
   "use server";

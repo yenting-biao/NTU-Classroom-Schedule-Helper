@@ -4,17 +4,57 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function Courses({
-  courses,
+  origCourses,
   padding,
 }: {
-  courses: Course[];
+  origCourses: Course[];
   padding: string;
 }) {
+  const [courses, setCourses] = useState<Course[]>(origCourses);
+  const [page, setPage] = useState<number>(1);
+
   const courseNumPerPage = 20;
   const maxPage = Math.ceil(courses.length / courseNumPerPage);
-  const [page, setPage] = useState(1);
   return (
     <>
+      <div className="flex items-center gap-2">
+        <div>
+          <label htmlFor="search" className="sr-only">
+            搜尋課程
+          </label>
+          <input
+            type="text"
+            id="search"
+            placeholder="搜尋課程名稱"
+            className="p-2 bg-gray-200 dark:bg-gray-800 rounded-lg"
+            onChange={(e) =>
+              setCourses(
+                origCourses.filter((course) =>
+                  course.name.includes(e.target.value)
+                )
+              )
+            }
+          />
+        </div>
+        <div>
+          <label htmlFor="search" className="sr-only">
+            搜尋課程
+          </label>
+          <input
+            type="text"
+            id="search"
+            placeholder="搜尋授課教師"
+            className="p-2 bg-gray-200 dark:bg-gray-800 rounded-lg"
+            onChange={(e) =>
+              setCourses(
+                origCourses.filter((course) =>
+                  course.instructor.includes(e.target.value)
+                )
+              )
+            }
+          />
+        </div>
+      </div>
       <table className="table-auto">
         <thead>
           <tr className="border-b sticky top-0 dark:bg-[rgb(25,25,25)] bg-slate-100">
