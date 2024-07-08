@@ -198,7 +198,7 @@ def parse_schedule(schedule_str):
 
     schedules = []
 
-    weeks = 0
+    weeks = [0]
     week_match = week_pattern.search(schedule_str)
     if week_match:
         str_weeks = week_match[0]
