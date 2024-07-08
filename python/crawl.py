@@ -193,7 +193,7 @@ def crawlPage(url: str, allCourseInfo: AllCourses) -> None:
 
 
 def parse_schedule(schedule_str):
-    week_pattern = re.compile(r".[0-9,]*週")
+    week_pattern = re.compile(r".[0-9+]*週")
     time_pattern = re.compile(r"\((.)\) (\d{1,2}:\d{2})~(\d{1,2}:\d{2})")
 
     schedules = []
@@ -201,11 +201,16 @@ def parse_schedule(schedule_str):
     weeks = 0
     week_match = week_pattern.search(schedule_str)
     if week_match:
-        # print(week_match[0])
-        # s = week_match[0][1:-1]
-        # s = s.split(",")
-        # weeks = [int(i) for i in s]
-        weeks = week_match[0]
+        str_weeks = week_match[0]
+        if str_weeks == "單週":
+            weeks = [-1]
+        elif str_weeks == "雙週":
+            weeks = [-2]
+        else:
+            # eg. 第5+6+7+8+9+10+11+12+13+14+15+16週
+            s = week_match[0][1:-1]
+            s = s.split("+")
+            weeks = [int(i) for i in s]
 
     # Find all matches for the time pattern in the schedule string
     for match in time_pattern.finditer(schedule_str):

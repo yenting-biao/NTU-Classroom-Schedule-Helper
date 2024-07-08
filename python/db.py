@@ -2,7 +2,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import dotenv
 import csv
-from python.crawl import parse_schedule
+from crawl import parse_schedule
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
         collection = db["courses"]
 
         # Delete all documents in the collection
-        # collection.delete_many({})
+        collection.delete_many({})
 
     except Exception as e:
         print(e)
