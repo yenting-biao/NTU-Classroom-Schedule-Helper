@@ -18,7 +18,6 @@ export default function Home() {
     time: [],
   }));
 
-  const [origCourses, setOrigCourses] = useState<Course[]>(dummyCourses);
   const [courses, setCourses] = useState<Course[]>(dummyCourses);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
@@ -27,154 +26,30 @@ export default function Home() {
   const instructorRef = useRef<HTMLInputElement>(null);
   const departmentRef = useRef<HTMLSelectElement>(null);
 
-  const handleSearch = () => {
-    const courseName = courseNameRef.current?.value;
-    const instructor = instructorRef.current?.value;
-    const department = departmentRef.current?.value;
-    setCourses(
-      origCourses.filter(
-        (course) =>
-          course.name.includes(courseName || "") &&
-          course.instructor.includes(instructor || "") &&
-          course.id.startsWith(department?.slice(0, 3) || "")
-      )
+  const handleSearch = async () => {
+    setLoading(true);
+    setCourses(dummyCourses);
+    const res = await fetch(
+      `/api/courses?deptCode=${departmentRef.current?.value}&instructor=${instructorRef.current?.value}&courseName=${courseNameRef.current?.value}`
     );
+    const data = await res.json();
+    const validatedData = data.map((course: Course) =>
+      courseSchema.parse(course)
+    );
+    setCourses(validatedData);
+    setLoading(false);
     setPage(1);
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch("/api/courses");
-      const data = await res.json();
-      const validatedData = data.map((course: Course) =>
-        courseSchema.parse(course)
-      );
-      setCourses(validatedData);
-      setOrigCourses(validatedData);
-      setLoading(false);
-    };
-
-    fetchData();
+    handleSearch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const padding = "p-5";
-  return (
-    <main className="flex flex-col p-5 gap-5">
-      {/* <Courses origCourses={courses || []} padding={padding} /> */}
-      <div className="flex flex-col items-start md:flex-row md:items-end gap-2">
-        <DepartmentSelect
-          departmentRef={departmentRef}
-          handleSearch={handleSearch}
-        />
-        <SearchBox
-          label="課程名稱"
-          searchRef={courseNameRef}
-          placeholder="搜尋課程名稱"
-          handleSearch={handleSearch}
-        />
-        <SearchBox
-          label="授課教師"
-          searchRef={instructorRef}
-          placeholder="搜尋授課教師"
-          handleSearch={handleSearch}
-        />
-        <button
-          className="px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg whitespace-nowrap"
-          onClick={() => {
-            handleSearch();
-          }}
-        >
-          搜尋
-        </button>
-      </div>
-      <p className="ml-1">
-        {loading ? "搜尋中..." : `找到 ${courses.length} 筆資料`}
-      </p>
-      <table className="table-auto">
-        <thead>
-          <tr className="border-b sticky top-0 dark:bg-[rgb(25,25,25)] bg-slate-100">
-            <th className={`text-left ${padding}`}>課程名稱</th>
-            <th className={`text-left ${padding} md:whitespace-nowrap`}>
-              課程識別碼與班次
-            </th>
-            <th className={`text-left ${padding}`}>授課教師</th>
-            <th className={`text-left ${padding}`}>上課地點</th>
-            <th className={`text-left ${padding}`}>上課時間</th>
-          </tr>
-        </thead>
-        <tbody>
-          {courses
-            .slice((page - 1) * courseNumPerPage, page * courseNumPerPage)
-            .map((course, i) => (
-              <TableRow
-                key={i}
-                loading={loading}
-                padding={padding}
-                course={course}
-              />
-            ))}
-        </tbody>
-      </table>
-      <div className="flex items-center gap-3 justify-center">
-        <button
-          onClick={() => setPage(page - 1)}
-          disabled={page === 1}
-          className={`p-2 bg-gray-200 dark:bg-gray-800 ${
-            page === 1
-              ? "cursor-not-allowed"
-              : "hover:bg-gray-300 dark:hover:bg-gray-700"
-          } rounded-lg`}
-        >
-          上一頁
-        </button>
-        <p>
-          第{" "}
-          <select
-            value={page}
-            onChange={(e) => setPage(parseInt(e.target.value))}
-            className="p-1 bg-gray-200 dark:bg-gray-800 rounded-md"
-          >
-            {Array.from({
-              length: Math.ceil(courses.length / courseNumPerPage),
-            })
-              .map((_, i) => i + 1)
-              .map((i) => (
-                <option key={i} value={i} className="rounded-sm">
-                  {i}
-                </option>
-              ))}
-          </select>{" "}
-          / {Math.ceil(courses.length / courseNumPerPage)} 頁
-        </p>
-        <button
-          onClick={() => setPage(page + 1)}
-          disabled={page === Math.ceil(courses.length / courseNumPerPage)}
-          className={`p-2 bg-gray-200 dark:bg-gray-800 ${
-            page === Math.ceil(courses.length / courseNumPerPage)
-              ? "cursor-not-allowed"
-              : "hover:bg-gray-300 dark:hover:bg-gray-700"
-          } rounded-lg`}
-        >
-          下一頁
-        </button>
-      </div>
-    </main>
-  );
-}
-
-function TableRow({
-  loading,
-  padding,
-  course,
-}: {
-  loading: boolean;
-  padding: string;
-  course: Course;
-}) {
-  const [theme, setTheme] = useState({
-    baseColor: "#",
-    highlightColor: "#",
-  });
+  const [theme, setTheme] = useState<{
+    baseColor: string;
+    highlightColor: string;
+  } | null>(null);
 
   useEffect(() => {
     const prefersDark = window.matchMedia(
@@ -192,44 +67,180 @@ function TableRow({
         highlightColor: "#f5f5f5",
       });
     }
+
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (e) => {
+        if (e.matches) {
+          setTheme({
+            baseColor: "#202020",
+            highlightColor: "#444",
+          });
+        } else {
+          setTheme({
+            baseColor: "#ebebeb",
+            highlightColor: "#f5f5f5",
+          });
+        }
+      });
+
+    return () => {
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .removeEventListener("change", () => {});
+    };
   }, []);
 
+  const padding = "p-5";
   return (
-    <SkeletonTheme
-      baseColor={theme.baseColor}
-      highlightColor={theme.highlightColor}
-    >
-      <tr className="border-b hover:bg-slate-200 dark:hover:bg-gray-800">
-        <td className={`${padding}`}>{loading ? <Skeleton /> : course.name}</td>
-        <td className={`${padding}`}>
-          {loading ? (
-            <Skeleton />
-          ) : (
-            <Link
-              href={`https://coursemap.aca.ntu.edu.tw/course_map_all/course.php?code=${
-                course.id.split(" ")[0]
-              }+${course.id.split(" ")[1].split("-")[0]}`}
-              className="hover:text-blue-500 underline"
-              target="_blank"
-              rel="noreferrer noopener"
+    <main className="flex flex-col p-5 gap-5">
+      <SkeletonTheme
+        baseColor={theme?.baseColor}
+        highlightColor={theme?.highlightColor}
+      >
+        {/* <Courses origCourses={courses || []} padding={padding} /> */}
+        <div className="flex flex-col items-start md:flex-row md:items-end gap-2">
+          <DepartmentSelect
+            departmentRef={departmentRef}
+            handleSearch={handleSearch}
+          />
+          <SearchBox
+            label="課程名稱"
+            searchRef={courseNameRef}
+            placeholder="搜尋課程名稱"
+            handleSearch={handleSearch}
+          />
+          <SearchBox
+            label="授課教師"
+            searchRef={instructorRef}
+            placeholder="搜尋授課教師"
+            handleSearch={handleSearch}
+          />
+          <button
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg whitespace-nowrap"
+            onClick={() => {
+              handleSearch();
+            }}
+          >
+            搜尋
+          </button>
+        </div>
+        <p className="ml-1">
+          {loading ? "搜尋中..." : `找到 ${courses.length} 筆資料`}
+        </p>
+        <table className="table-auto">
+          <thead>
+            <tr className="border-b sticky top-0 dark:bg-[rgb(25,25,25)] bg-slate-100">
+              <th className={`text-left ${padding}`}>課程名稱</th>
+              <th className={`text-left ${padding} md:whitespace-nowrap`}>
+                課程識別碼與班次
+              </th>
+              <th className={`text-left ${padding}`}>授課教師</th>
+              <th className={`text-left ${padding}`}>上課地點</th>
+              <th className={`text-left ${padding}`}>上課時間</th>
+            </tr>
+          </thead>
+          <tbody>
+            {courses
+              .slice((page - 1) * courseNumPerPage, page * courseNumPerPage)
+              .map((course, i) => (
+                <TableRow
+                  key={i}
+                  loading={loading}
+                  padding={padding}
+                  course={course}
+                />
+              ))}
+          </tbody>
+        </table>
+        <div className="flex items-center gap-3 justify-center">
+          <button
+            onClick={() => setPage(page - 1)}
+            disabled={page === 1}
+            className={`p-2 bg-gray-200 dark:bg-gray-800 ${
+              page === 1
+                ? "cursor-not-allowed"
+                : "hover:bg-gray-300 dark:hover:bg-gray-700"
+            } rounded-lg`}
+          >
+            上一頁
+          </button>
+          <p>
+            第{" "}
+            <select
+              value={page}
+              onChange={(e) => setPage(parseInt(e.target.value))}
+              className="p-1 bg-gray-200 dark:bg-gray-800 rounded-md"
             >
-              {course.id}
-            </Link>
-          )}
-        </td>
-        <td className={`${padding}`}>
-          {loading ? <Skeleton /> : course.instructor}
-        </td>
-        <td className={`${padding}`}>{loading ? <Skeleton /> : course.room}</td>
-        <td className={`${padding}`}>
-          {loading ? (
-            <Skeleton />
-          ) : (
-            course.time.map((time, i) => <TimeComponent key={i} time={time} />)
-          )}
-        </td>
-      </tr>
-    </SkeletonTheme>
+              {Array.from({
+                length: Math.ceil(courses.length / courseNumPerPage),
+              })
+                .map((_, i) => i + 1)
+                .map((i) => (
+                  <option key={i} value={i} className="rounded-sm">
+                    {i}
+                  </option>
+                ))}
+            </select>{" "}
+            / {Math.ceil(courses.length / courseNumPerPage)} 頁
+          </p>
+          <button
+            onClick={() => setPage(page + 1)}
+            disabled={page === Math.ceil(courses.length / courseNumPerPage)}
+            className={`p-2 bg-gray-200 dark:bg-gray-800 ${
+              page === Math.ceil(courses.length / courseNumPerPage)
+                ? "cursor-not-allowed"
+                : "hover:bg-gray-300 dark:hover:bg-gray-700"
+            } rounded-lg`}
+          >
+            下一頁
+          </button>
+        </div>
+      </SkeletonTheme>
+    </main>
+  );
+}
+
+function TableRow({
+  loading,
+  padding,
+  course,
+}: {
+  loading: boolean;
+  padding: string;
+  course: Course;
+}) {
+  return (
+    <tr className="border-b hover:bg-slate-200 dark:hover:bg-gray-800">
+      <td className={`${padding}`}>{loading ? <Skeleton /> : course.name}</td>
+      <td className={`${padding}`}>
+        {loading ? (
+          <Skeleton />
+        ) : (
+          <Link
+            href={`https://coursemap.aca.ntu.edu.tw/course_map_all/course.php?code=${
+              course.id.split(" ")[0]
+            }+${course.id.split(" ")[1].split("-")[0]}`}
+            className="hover:text-blue-500 underline"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            {course.id}
+          </Link>
+        )}
+      </td>
+      <td className={`${padding}`}>
+        {loading ? <Skeleton /> : course.instructor}
+      </td>
+      <td className={`${padding}`}>{loading ? <Skeleton /> : course.room}</td>
+      <td className={`${padding}`}>
+        {loading ? (
+          <Skeleton />
+        ) : (
+          course.time.map((time, i) => <TimeComponent key={i} time={time} />)
+        )}
+      </td>
+    </tr>
   );
 }
 
