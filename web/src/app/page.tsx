@@ -93,7 +93,7 @@ export default function Home() {
 
   const padding = "p-5";
   return (
-    <main className="flex flex-col p-5 gap-5">
+    <main className="flex flex-col p-5 gap-5 flex-1">
       <SkeletonTheme
         baseColor={theme?.baseColor}
         highlightColor={theme?.highlightColor}
