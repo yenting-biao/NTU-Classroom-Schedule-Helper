@@ -5,7 +5,7 @@ import SearchBox from "./_components/SearchBox";
 import DepartmentSelect from "./_components/DepartmentSelect";
 import { Course, CourseTime } from "@/lib/types/db";
 import { courseSchema } from "@/lib/validators/courses";
-import Skeleton from "react-loading-skeleton";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 export default function Home() {
@@ -171,37 +171,65 @@ function TableRow({
   padding: string;
   course: Course;
 }) {
+  const [theme, setTheme] = useState({
+    baseColor: "#",
+    highlightColor: "#",
+  });
+
+  useEffect(() => {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+
+    if (prefersDark) {
+      setTheme({
+        baseColor: "#202020",
+        highlightColor: "#444",
+      });
+    } else {
+      setTheme({
+        baseColor: "#ebebeb",
+        highlightColor: "#f5f5f5",
+      });
+    }
+  }, []);
+
   return (
-    <tr className="border-b hover:bg-slate-200 dark:hover:bg-gray-800">
-      <td className={`${padding}`}>{loading ? <Skeleton /> : course.name}</td>
-      <td className={`${padding}`}>
-        {loading ? (
-          <Skeleton />
-        ) : (
-          <Link
-            href={`https://coursemap.aca.ntu.edu.tw/course_map_all/course.php?code=${
-              course.id.split(" ")[0]
-            }+${course.id.split(" ")[1].split("-")[0]}`}
-            className="hover:text-blue-500 underline"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            {course.id}
-          </Link>
-        )}
-      </td>
-      <td className={`${padding}`}>
-        {loading ? <Skeleton /> : course.instructor}
-      </td>
-      <td className={`${padding}`}>{loading ? <Skeleton /> : course.room}</td>
-      <td className={`${padding}`}>
-        {loading ? (
-          <Skeleton />
-        ) : (
-          course.time.map((time, i) => <TimeComponent key={i} time={time} />)
-        )}
-      </td>
-    </tr>
+    <SkeletonTheme
+      baseColor={theme.baseColor}
+      highlightColor={theme.highlightColor}
+    >
+      <tr className="border-b hover:bg-slate-200 dark:hover:bg-gray-800">
+        <td className={`${padding}`}>{loading ? <Skeleton /> : course.name}</td>
+        <td className={`${padding}`}>
+          {loading ? (
+            <Skeleton />
+          ) : (
+            <Link
+              href={`https://coursemap.aca.ntu.edu.tw/course_map_all/course.php?code=${
+                course.id.split(" ")[0]
+              }+${course.id.split(" ")[1].split("-")[0]}`}
+              className="hover:text-blue-500 underline"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              {course.id}
+            </Link>
+          )}
+        </td>
+        <td className={`${padding}`}>
+          {loading ? <Skeleton /> : course.instructor}
+        </td>
+        <td className={`${padding}`}>{loading ? <Skeleton /> : course.room}</td>
+        <td className={`${padding}`}>
+          {loading ? (
+            <Skeleton />
+          ) : (
+            course.time.map((time, i) => <TimeComponent key={i} time={time} />)
+          )}
+        </td>
+      </tr>
+    </SkeletonTheme>
   );
 }
 

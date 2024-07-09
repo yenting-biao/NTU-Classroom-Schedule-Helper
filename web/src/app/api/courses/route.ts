@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 export async function GET() {
+  // get search params
   try {
     await client.connect();
     const db = client.db("ntu-class-schedule");
