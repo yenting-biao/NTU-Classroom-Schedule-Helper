@@ -1,12 +1,12 @@
 import { Course } from "@/lib/types/db";
 import { courseSchema } from "@/lib/validators/courses";
 import { client } from "@/db/client";
+import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-export const getAllCourseData = async () => {
-  "use server";
+export async function GET() {
   try {
     await client.connect();
     const db = client.db("ntu-class-schedule");
@@ -18,9 +18,9 @@ export const getAllCourseData = async () => {
       courseSchema.parse(course)
     );
 
-    return validatedCourses;
+    return NextResponse.json(validatedCourses, { status: 200 });
   } catch (error) {
     console.error(error);
-    return [];
+    return NextResponse.json("Failed to fetch data", { status: 500 });
   }
-};
+}
