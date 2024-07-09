@@ -26,7 +26,7 @@ export default function RootLayout({
           <p className="text-lg">讓你輕鬆查詢教室課表上的課程</p>
         </div>
         <div className="px-6">
-          更新時間：2024/07/08 17:00
+          更新時間：2024/07/9 18:00
           <br />
           注意事項與免責聲明：
           <ul className="list-disc list-inside">
