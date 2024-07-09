@@ -10,13 +10,15 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 export default function Home() {
   const courseNumPerPage = 20;
-  const dummyCourses: Course[] = Array.from({ length: 20 }).map((_, i) => ({
-    id: "",
-    name: "",
-    instructor: "",
-    room: "",
-    time: [],
-  }));
+  const dummyCourses: Course[] = Array.from({ length: courseNumPerPage }).map(
+    (_, i) => ({
+      id: "",
+      name: "",
+      instructor: "",
+      room: "",
+      time: [],
+    }),
+  );
 
   const [courses, setCourses] = useState<Course[]>(dummyCourses);
   const [loading, setLoading] = useState<boolean>(true);
@@ -167,7 +169,11 @@ export default function Home() {
           </button>
           <p>
             第{" "}
+            <label htmlFor="page" className="sr-only">
+              頁數
+            </label>
             <select
+              id="page"
               value={page}
               onChange={(e) => setPage(parseInt(e.target.value))}
               className="p-1 bg-gray-200 dark:bg-gray-800 rounded-md"
