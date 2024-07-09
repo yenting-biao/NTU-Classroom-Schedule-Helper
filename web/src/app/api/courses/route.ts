@@ -11,7 +11,6 @@ export async function GET(req: NextRequest) {
   const deptCode = req.nextUrl.searchParams.get("deptCode")?.slice(0, 3);
   const instructor = req.nextUrl.searchParams.get("instructor");
   const courseName = req.nextUrl.searchParams.get("courseName");
-  console.log("param", deptCode, instructor, courseName);
   try {
     await client.connect();
     const db = client.db("ntu-class-schedule");

@@ -210,6 +210,7 @@ function TableRow({
   padding: string;
   course: Course;
 }) {
+  const sortedTime = course.time.sort((a, b) => a.day - b.day);
   return (
     <tr className="border-b">
       <td className={`${padding}`}>{loading ? <Skeleton /> : course.name}</td>
@@ -237,7 +238,7 @@ function TableRow({
         {loading ? (
           <Skeleton />
         ) : (
-          course.time.map((time, i) => <TimeComponent key={i} time={time} />)
+          sortedTime.map((time, i) => <TimeComponent key={i} time={time} />)
         )}
       </td>
     </tr>
