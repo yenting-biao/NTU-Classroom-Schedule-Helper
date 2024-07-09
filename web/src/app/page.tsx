@@ -46,10 +46,10 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [theme, setTheme] = useState<{
-    baseColor: string;
-    highlightColor: string;
-  } | null>(null);
+  const [theme, setTheme] = useState({
+    baseColor: "#",
+    highlightColor: "#",
+  });
 
   useEffect(() => {
     const prefersDark = window.matchMedia(
@@ -211,7 +211,7 @@ function TableRow({
   course: Course;
 }) {
   return (
-    <tr className="border-b hover:bg-slate-200 dark:hover:bg-gray-800">
+    <tr className="border-b">
       <td className={`${padding}`}>{loading ? <Skeleton /> : course.name}</td>
       <td className={`${padding}`}>
         {loading ? (
