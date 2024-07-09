@@ -30,11 +30,11 @@ export default function Home() {
     setLoading(true);
     setCourses(dummyCourses);
     const res = await fetch(
-      `/api/courses?deptCode=${departmentRef.current?.value}&instructor=${instructorRef.current?.value}&courseName=${courseNameRef.current?.value}`
+      `/api/courses?deptCode=${departmentRef.current?.value}&instructor=${instructorRef.current?.value}&courseName=${courseNameRef.current?.value}`,
     );
     const data = await res.json();
     const validatedData = data.map((course: Course) =>
-      courseSchema.parse(course)
+      courseSchema.parse(course),
     );
     setCourses(validatedData);
     setLoading(false);
@@ -53,7 +53,7 @@ export default function Home() {
 
   useEffect(() => {
     const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
+      "(prefers-color-scheme: dark)",
     ).matches;
 
     if (prefersDark) {

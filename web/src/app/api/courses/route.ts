@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
 
     // Use zod to validate the data
     const validatedCourses = courses.map((course) =>
-      courseSchema.parse(course)
+      courseSchema.parse(course),
     );
 
     return NextResponse.json(validatedCourses, { status: 200 });
