@@ -6,7 +6,7 @@ from crawl import parse_schedule
 
 
 def main():
-    uri = dotenv.dotenv_values()["MONGO_URI"]
+    uri = dotenv.dotenv_values()["MONGODB_URI"]
     client = MongoClient(uri, server_api=ServerApi("1"))
 
     try:
