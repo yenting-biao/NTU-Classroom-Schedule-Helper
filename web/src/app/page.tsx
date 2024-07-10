@@ -4,21 +4,25 @@ import Link from "next/link";
 import SearchBox from "./_components/SearchBox";
 import DepartmentSelect from "./_components/DepartmentSelect";
 import { Course, CourseTime } from "@/lib/types/db";
-import { courseSchema } from "@/lib/validators/courses";
+import { courseSchema, getCourseSchema } from "@/lib/validators/courses";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 export default function Home() {
   const courseNumPerPage = 20;
-  const dummyCourses: Course[] = Array.from({ length: 20 }).map((_, i) => ({
-    id: "",
-    name: "",
-    instructor: "",
-    room: "",
-    time: [],
-  }));
+  const dummyCourses: Course[] = Array.from({ length: courseNumPerPage }).map(
+    (_, i) => ({
+      _id: "",
+      id: "",
+      name: "",
+      instructor: "",
+      room: "",
+      time: [],
+    }),
+  );
 
   const [courses, setCourses] = useState<Course[]>(dummyCourses);
+  const [total, setTotal] = useState<number>(dummyCourses.length);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
 
@@ -26,19 +30,49 @@ export default function Home() {
   const instructorRef = useRef<HTMLInputElement>(null);
   const departmentRef = useRef<HTMLSelectElement>(null);
 
-  const handleSearch = async () => {
+  // input parameters: indicating initial search, or go to next page, or go to previous page
+  const handleSearch = async (
+    targetPage: number = 1,
+    isNewSearch: boolean = true,
+  ) => {
+    if (
+      !isNewSearch &&
+      (targetPage < 1 || targetPage > Math.ceil(total / courseNumPerPage))
+    ) {
+      return;
+    }
+
     setLoading(true);
     setCourses(dummyCourses);
-    const res = await fetch(
-      `/api/courses?deptCode=${departmentRef.current?.value}&instructor=${instructorRef.current?.value}&courseName=${courseNameRef.current?.value}`,
-    );
-    const data = await res.json();
-    const validatedData = data.map((course: Course) =>
-      courseSchema.parse(course),
-    );
-    setCourses(validatedData);
-    setLoading(false);
-    setPage(1);
+    let searchUrl = "/api/courses?";
+    searchUrl += `deptCode=${departmentRef.current?.value}&`;
+    searchUrl += `&instructor=${instructorRef.current?.value}`;
+    searchUrl += `&courseName=${courseNameRef.current?.value}`;
+    searchUrl += `&maxNum=${courseNumPerPage}`;
+    if (!isNewSearch) {
+      searchUrl += `&skip=${(Math.abs(targetPage - page) - 1) * courseNumPerPage}`;
+      if (targetPage > page) {
+        searchUrl += `&last=${courses[courses.length - 1]._id}`;
+      } else {
+        searchUrl += `&first=${courses[0]._id}`;
+      }
+    }
+    try {
+      const res = await fetch(searchUrl);
+      const data = await res.json();
+      const validatedData = getCourseSchema.parse(data);
+      if (!isNewSearch && targetPage < page) {
+        validatedData.courses.reverse();
+      }
+      setCourses(validatedData.courses);
+      if (isNewSearch) {
+        setTotal(validatedData.total);
+      }
+      setLoading(false);
+      setPage(targetPage);
+    } catch (error) {
+      console.error("GET /api/courses ERROR:", error);
+    }
   };
 
   useEffect(() => {
@@ -125,9 +159,7 @@ export default function Home() {
             搜尋
           </button>
         </div>
-        <p className="ml-1">
-          {loading ? "搜尋中..." : `找到 ${courses.length} 筆資料`}
-        </p>
+        <p className="ml-1">{loading ? "搜尋中..." : `找到 ${total} 筆資料`}</p>
         <table className="table-auto">
           <thead>
             <tr className="border-b sticky top-0 dark:bg-[rgb(25,25,25)] bg-slate-100">
@@ -142,7 +174,7 @@ export default function Home() {
           </thead>
           <tbody>
             {courses
-              .slice((page - 1) * courseNumPerPage, page * courseNumPerPage)
+              //.slice((page - 1) * courseNumPerPage, page * courseNumPerPage)
               .map((course, i) => (
                 <TableRow
                   key={i}
@@ -155,7 +187,9 @@ export default function Home() {
         </table>
         <div className="flex items-center gap-3 justify-center">
           <button
-            onClick={() => setPage(page - 1)}
+            onClick={async () => {
+              await handleSearch(page - 1, false);
+            }}
             disabled={page === 1}
             className={`p-2 bg-gray-200 dark:bg-gray-800 ${
               page === 1
@@ -167,13 +201,19 @@ export default function Home() {
           </button>
           <p>
             第{" "}
+            <label htmlFor="page" className="sr-only">
+              頁數
+            </label>
             <select
+              id="page"
               value={page}
-              onChange={(e) => setPage(parseInt(e.target.value))}
+              onChange={async (e) => {
+                await handleSearch(parseInt(e.target.value), false);
+              }}
               className="p-1 bg-gray-200 dark:bg-gray-800 rounded-md"
             >
               {Array.from({
-                length: Math.ceil(courses.length / courseNumPerPage),
+                length: Math.ceil(total / courseNumPerPage),
               })
                 .map((_, i) => i + 1)
                 .map((i) => (
@@ -182,13 +222,15 @@ export default function Home() {
                   </option>
                 ))}
             </select>{" "}
-            / {Math.ceil(courses.length / courseNumPerPage)} 頁
+            / {Math.ceil(total / courseNumPerPage)} 頁
           </p>
           <button
-            onClick={() => setPage(page + 1)}
-            disabled={page === Math.ceil(courses.length / courseNumPerPage)}
+            onClick={async () => {
+              await handleSearch(page + 1, false);
+            }}
+            disabled={page === Math.ceil(total / courseNumPerPage)}
             className={`p-2 bg-gray-200 dark:bg-gray-800 ${
-              page === Math.ceil(courses.length / courseNumPerPage)
+              page === Math.ceil(total / courseNumPerPage)
                 ? "cursor-not-allowed"
                 : "hover:bg-gray-300 dark:hover:bg-gray-700"
             } rounded-lg`}

@@ -9,7 +9,7 @@ import Link from "next/link";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "台大教室課表小助手",
+  title: "台大教室課表小幫手",
   description: "讓你輕鬆查詢教室課表上的課程",
 };
 
@@ -26,7 +26,7 @@ export default function RootLayout({
           <p className="text-lg">讓你輕鬆查詢教室課表上的課程</p>
         </div>
         <div className="px-6">
-          更新時間：2024/07/09 18:00
+          更新時間：2024/07/10 18:00
           <br />
           注意事項與免責聲明：
           <ul className="list-disc list-inside">

@@ -6,7 +6,8 @@ export interface CourseTime {
 }
 
 export interface Course {
-  id: string;
+  _id: string; // mongodb id
+  id: string; // course id
   name: string;
   instructor: string;
   room: string;
