@@ -9,7 +9,7 @@ import Link from "next/link";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "台大教室課表小助手",
+  title: "台大教室課表小幫手",
   description: "讓你輕鬆查詢教室課表上的課程",
 };
 
