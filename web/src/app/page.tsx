@@ -4,9 +4,10 @@ import { Course } from "@/lib/types/db";
 import { getCourseSchema } from "@/lib/validators/courses";
 import { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { Button } from "@/components/ui/button";
+
 import SearchForm from "./_components/SearchForm";
 import { CourseCard } from "./_components/CourseCard";
+import PaginationComp from "./_components/Pagination";
 
 export default function Home() {
   const courseNumPerPage = 20;
@@ -137,49 +138,12 @@ export default function Home() {
             <CourseCard key={i} loading={loading} course={course} />
           ))}
         </div>
-        <div className="flex items-center gap-3 justify-center">
-          <Button
-            onClick={async () => {
-              await handleSearch(page - 1, false);
-            }}
-            disabled={page === 1}
-          >
-            上一頁
-          </Button>
-          <p>
-            第{" "}
-            <label htmlFor="page" className="sr-only">
-              頁數
-            </label>
-            <select
-              id="page"
-              value={page}
-              onChange={async (e) => {
-                await handleSearch(parseInt(e.target.value), false);
-              }}
-              className="p-1 bg-gray-200 dark:bg-gray-800 rounded-md"
-            >
-              {Array.from({
-                length: Math.ceil(total / courseNumPerPage),
-              })
-                .map((_, i) => i + 1)
-                .map((i) => (
-                  <option key={i} value={i} className="rounded-sm">
-                    {i}
-                  </option>
-                ))}
-            </select>{" "}
-            / {Math.ceil(total / courseNumPerPage)} 頁
-          </p>
-          <Button
-            onClick={async () => {
-              await handleSearch(page + 1, false);
-            }}
-            disabled={page === Math.ceil(total / courseNumPerPage)}
-          >
-            下一頁
-          </Button>
-        </div>
+        <PaginationComp
+          page={page}
+          total={total}
+          courseNumPerPage={courseNumPerPage}
+          handleSearch={handleSearch}
+        />
       </SkeletonTheme>
     </main>
   );
