@@ -1,12 +1,18 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import SearchBox from "./_components/SearchBox";
-import DepartmentSelect from "./_components/DepartmentSelect";
 import { Course, CourseTime } from "@/lib/types/db";
 import { courseSchema, getCourseSchema } from "@/lib/validators/courses";
+
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { z } from "zod";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
+import { Button } from "@/components/ui/button";
+import SearchForm from "./_components/SearchForm";
 
 export default function Home() {
   const courseNumPerPage = 20;
@@ -26,14 +32,18 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
 
-  const courseNameRef = useRef<HTMLInputElement>(null);
-  const instructorRef = useRef<HTMLInputElement>(null);
-  const departmentRef = useRef<HTMLSelectElement>(null);
+  // const courseNameRef = useRef<HTMLInputElement>(null);
+  // const instructorRef = useRef<HTMLInputElement>(null);
+  // //const departmentRef = useRef<HTMLDivElement>(null);
+  // const [dept, setDept] = useState<string>("0000");
 
   // input parameters: indicating initial search, or go to next page, or go to previous page
   const handleSearch = async (
     targetPage: number = 1,
     isNewSearch: boolean = true,
+    deptCode: string = "",
+    courseName: string = "",
+    instructor: string = "",
   ) => {
     if (
       !isNewSearch &&
@@ -45,9 +55,9 @@ export default function Home() {
     setLoading(true);
     setCourses(dummyCourses);
     let searchUrl = "/api/courses?";
-    searchUrl += `deptCode=${departmentRef.current?.value}&`;
-    searchUrl += `&instructor=${instructorRef.current?.value}`;
-    searchUrl += `&courseName=${courseNameRef.current?.value}`;
+    searchUrl += `deptCode=${deptCode === "0000" ? "" : deptCode}&`;
+    searchUrl += `&courseName=${courseName}`;
+    searchUrl += `&instructor=${instructor}`;
     searchUrl += `&maxNum=${courseNumPerPage}`;
     if (!isNewSearch) {
       searchUrl += `&skip=${(Math.abs(targetPage - page) - 1) * courseNumPerPage}`;
@@ -132,33 +142,7 @@ export default function Home() {
         baseColor={theme?.baseColor}
         highlightColor={theme?.highlightColor}
       >
-        {/* <Courses origCourses={courses || []} padding={padding} /> */}
-        <div className="flex flex-col items-start md:flex-row md:items-end gap-2">
-          <DepartmentSelect
-            departmentRef={departmentRef}
-            handleSearch={handleSearch}
-          />
-          <SearchBox
-            label="課程名稱"
-            searchRef={courseNameRef}
-            placeholder="搜尋課程名稱"
-            handleSearch={handleSearch}
-          />
-          <SearchBox
-            label="授課教師"
-            searchRef={instructorRef}
-            placeholder="搜尋授課教師"
-            handleSearch={handleSearch}
-          />
-          <button
-            className="px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg whitespace-nowrap"
-            onClick={() => {
-              handleSearch();
-            }}
-          >
-            搜尋
-          </button>
-        </div>
+        <SearchForm handleSearch={handleSearch} />
         <p className="ml-1">{loading ? "搜尋中..." : `找到 ${total} 筆資料`}</p>
         <table className="table-auto">
           <thead>
@@ -186,19 +170,14 @@ export default function Home() {
           </tbody>
         </table>
         <div className="flex items-center gap-3 justify-center">
-          <button
+          <Button
             onClick={async () => {
               await handleSearch(page - 1, false);
             }}
             disabled={page === 1}
-            className={`p-2 bg-gray-200 dark:bg-gray-800 ${
-              page === 1
-                ? "cursor-not-allowed"
-                : "hover:bg-gray-300 dark:hover:bg-gray-700"
-            } rounded-lg`}
           >
             上一頁
-          </button>
+          </Button>
           <p>
             第{" "}
             <label htmlFor="page" className="sr-only">
@@ -224,19 +203,14 @@ export default function Home() {
             </select>{" "}
             / {Math.ceil(total / courseNumPerPage)} 頁
           </p>
-          <button
+          <Button
             onClick={async () => {
               await handleSearch(page + 1, false);
             }}
             disabled={page === Math.ceil(total / courseNumPerPage)}
-            className={`p-2 bg-gray-200 dark:bg-gray-800 ${
-              page === Math.ceil(total / courseNumPerPage)
-                ? "cursor-not-allowed"
-                : "hover:bg-gray-300 dark:hover:bg-gray-700"
-            } rounded-lg`}
           >
             下一頁
-          </button>
+          </Button>
         </div>
       </SkeletonTheme>
     </main>
