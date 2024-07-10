@@ -22,6 +22,7 @@ export default function SearchBox({
         ref={searchRef}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
+            e.preventDefault();
             handleSearch();
           }
         }}

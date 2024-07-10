@@ -35,7 +35,10 @@ export default function Home() {
     targetPage: number = 1,
     isNewSearch: boolean = true,
   ) => {
-    if (targetPage < 1 || targetPage > Math.ceil(total / courseNumPerPage)) {
+    if (
+      !isNewSearch &&
+      (targetPage < 1 || targetPage > Math.ceil(total / courseNumPerPage))
+    ) {
       return;
     }
 
