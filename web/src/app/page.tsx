@@ -3,20 +3,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Course, CourseTime } from "@/lib/types/db";
 import { getCourseSchema } from "@/lib/validators/courses";
-
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
 import { Button } from "@/components/ui/button";
 import SearchForm from "./_components/SearchForm";
 
 export default function Home() {
   const courseNumPerPage = 20;
   const dummyCourses: Course[] = Array.from({ length: courseNumPerPage }).map(
-    (_, i) => ({
+    () => ({
       _id: "",
       id: "",
       name: "",
@@ -300,7 +295,7 @@ const TimeComponent = ({ time }: { time: CourseTime }) => {
       ) : (
         <p>第 {week.join(",")} 週&nbsp;</p>
       )}
-      <p>({dayStr[time.day]})&nbsp;</p>
+      <p>({dayStr[day]})&nbsp;</p>
       <p>{session}</p>
     </div>
   );
