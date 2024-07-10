@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import Skeleton from "react-loading-skeleton";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export function CourseCard({
   loading,
@@ -59,12 +60,10 @@ export function CourseCard({
             <div className="flex gap-1">
               {course.time
                 .sort((a, b) => a.day - b.day)
-                .map((time, i) => (
-                  <TimeComponent
-                    key={i}
-                    time={i == 0 ? time : { ...time, weeks: [0] }}
-                  />
-                ))}
+                .map((time, i) =>
+                  getFmtTime(i == 0 ? time : { ...time, weeks: [0] }),
+                )
+                .join(" ")}
             </div>
           </SmallDiv>
         </div>
@@ -76,16 +75,23 @@ export function CourseCard({
 const SmallDiv = ({
   children,
   loading,
+  className,
 }: {
   children: React.ReactNode;
   loading: boolean;
+  className?: string;
 }) => (
-  <div className="flex items-center gap-3 px-4 py-2 rounded-full border w-fit">
+  <div
+    className={cn(
+      "flex items-center gap-3 px-4 py-2 rounded-full border w-fit",
+      className,
+    )}
+  >
     {loading ? <Skeleton width={60} /> : children}
   </div>
 );
 
-const TimeComponent = ({ time }: { time: CourseTime }) => {
+const getFmtTime = (time: CourseTime) => {
   const week = time.weeks.sort();
   const day = time.day;
   const start_time = time.start_time;
@@ -112,21 +118,20 @@ const TimeComponent = ({ time }: { time: CourseTime }) => {
   const startIndex = sessionStr.indexOf(start_time);
   const endIndex = sessionStr.indexOf(end_time);
   const session = sessionStr.slice(startIndex, endIndex + 1);
-  return (
-    <p className="flex">
-      {week.length === 1 ? (
-        week[0] === 0 ? null : week[0] === -1 ? (
-          <p>（單週）</p>
-        ) : week[0] === -2 ? (
-          <p>（雙週）</p>
-        ) : (
-          <p>此筆資料有問題</p>
-        )
-      ) : (
-        <p>（第 {week.join(",")} 週）</p>
-      )}
-      <p>{dayStr[day]}&nbsp;</p>
-      <p>{session}</p>
-    </p>
-  );
+  let string = "";
+  if (week.length === 1) {
+    if (week[0] === 0) {
+      string = "";
+    } else if (week[0] === -1) {
+      string = "（單週）";
+    } else if (week[0] === -2) {
+      string = "（雙週）";
+    } else {
+      string = "此筆資料有問題";
+    }
+  } else {
+    string = "（第 " + week.join(",") + " 週）";
+  }
+  string += dayStr[day] + " " + session;
+  return string;
 };

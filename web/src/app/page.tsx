@@ -132,7 +132,7 @@ export default function Home() {
       >
         <SearchForm handleSearch={handleSearch} />
         <p className="ml-1">{loading ? "搜尋中..." : `找到 ${total} 筆資料`}</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
           {courses.map((course, i) => (
             <CourseCard key={i} loading={loading} course={course} />
           ))}
