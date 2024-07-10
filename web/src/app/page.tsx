@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Course } from "@/lib/types/db";
 import { getCourseSchema } from "@/lib/validators/courses";
 import { SkeletonTheme } from "react-loading-skeleton";
@@ -26,6 +26,7 @@ export default function Home() {
   const [total, setTotal] = useState<number>(dummyCourses.length);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
+  const scrollRef = useRef<HTMLParagraphElement>(null);
 
   // input parameters: indicating initial search, or go to next page, or go to previous page
   const handleSearch = async (
@@ -44,6 +45,9 @@ export default function Home() {
 
     setLoading(true);
     setCourses(dummyCourses);
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "auto" });
+    }
     let searchUrl = "/api/courses?";
     searchUrl += `deptCode=${deptCode === "0000" ? "" : deptCode}&`;
     searchUrl += `&courseName=${courseName}`;
@@ -132,7 +136,9 @@ export default function Home() {
         highlightColor={theme?.highlightColor}
       >
         <SearchForm handleSearch={handleSearch} />
-        <p className="ml-1">{loading ? "搜尋中..." : `找到 ${total} 筆資料`}</p>
+        <p className="ml-1 pt-2" ref={scrollRef}>
+          {loading ? "搜尋中..." : `找到 ${total} 筆資料`}
+        </p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
           {courses.map((course, i) => (
             <CourseCard key={i} loading={loading} course={course} />
