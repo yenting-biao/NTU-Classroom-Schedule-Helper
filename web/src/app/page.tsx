@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Course, CourseTime } from "@/lib/types/db";
-import { courseSchema, getCourseSchema } from "@/lib/validators/courses";
+import { getCourseSchema } from "@/lib/validators/courses";
 
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
