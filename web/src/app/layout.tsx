@@ -4,8 +4,8 @@ import "./globals.css";
 import { Suspense } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import Link from "next/link";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import React from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
