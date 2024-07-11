@@ -40,7 +40,9 @@ export default function PaginationComp({
             }}
           />
         </PaginationItem>
-        {page === Math.ceil(total / courseNumPerPage) && <EllipsisItem />}
+        {page === Math.ceil(total / courseNumPerPage) && page - 1 > 1 && (
+          <EllipsisItem />
+        )}
         {page - 1 > 0 && (
           <PaginationItem>
             <PaginationLink
@@ -62,17 +64,19 @@ export default function PaginationComp({
             <SelectTrigger className="no-down-icon p-0 border-none outline-none">
               <PaginationLink isActive>{page}</PaginationLink>
             </SelectTrigger>
-            <SelectContent className="-translate-x-1/3">
-              <SelectGroup>
-                {Array.from({
-                  length: Math.ceil(total / courseNumPerPage),
-                }).map((_, index) => (
-                  <SelectItem key={index} value={String(index + 1)}>
-                    {index + 1}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
+            {Math.ceil(total / courseNumPerPage) > 1 && (
+              <SelectContent className="-translate-x-1/3">
+                <SelectGroup>
+                  {Array.from({
+                    length: Math.ceil(total / courseNumPerPage),
+                  }).map((_, index) => (
+                    <SelectItem key={index} value={String(index + 1)}>
+                      {index + 1}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            )}
           </Select>
         </PaginationItem>
         {page + 1 <= Math.ceil(total / courseNumPerPage) && (
@@ -86,7 +90,9 @@ export default function PaginationComp({
             </PaginationLink>
           </PaginationItem>
         )}
-        {page === 1 && <EllipsisItem />}
+        {page === 1 && page + 1 < Math.ceil(total / courseNumPerPage) && (
+          <EllipsisItem />
+        )}
         <PaginationItem>
           <PaginationNext
             disabled={page >= Math.ceil(total / courseNumPerPage)}

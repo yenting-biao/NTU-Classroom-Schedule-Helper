@@ -27,6 +27,11 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const scrollRef = useRef<HTMLParagraphElement>(null);
+  const [prevSearch, setPrevSearch] = useState({
+    deptCode: "",
+    courseName: "",
+    instructor: "",
+  });
 
   // input parameters: indicating initial search, or go to next page, or go to previous page
   const handleSearch = async (
@@ -43,9 +48,21 @@ export default function Home() {
       return;
     }
 
+    if (!isNewSearch) {
+      deptCode = prevSearch.deptCode;
+      courseName = prevSearch.courseName;
+      instructor = prevSearch.instructor;
+    } else {
+      setPrevSearch({
+        deptCode,
+        courseName,
+        instructor,
+      });
+    }
+
     setLoading(true);
     setCourses(dummyCourses);
-    if (scrollRef.current) {
+    if (scrollRef.current && !isNewSearch) {
       scrollRef.current.scrollIntoView({ behavior: "auto" });
     }
     let searchUrl = "/api/courses?";
