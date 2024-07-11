@@ -6,6 +6,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import React from "react";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,7 +34,7 @@ export default function RootLayout({
             <p className="text-lg">讓你輕鬆查詢教室課表上的課程</p>
           </div>
           <div className="px-6">
-            更新時間：2024/07/10 18:00
+            資料更新時間：2024/07/11 17:00
             <br />
             注意事項與免責聲明：
             <ul className="list-disc list-inside">
@@ -47,15 +48,15 @@ export default function RootLayout({
           </div>
           <Suspense fallback={<Skeleton />}>{children}</Suspense>
           <footer className="p-5 pt-2 text-center text-sm">
-            Github Repo: 等我做好再公開{"><"}
-            {/* <Link
-            href="https://github.com/yenting-biao/NTU-Classroom-Schedule-Helper"
-            className="underline hover:text-blue-500"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            Link
-          </Link> */}
+            如果有發現任何問題或建議，歡迎至 GitHub 提出 Issue：
+            <Link
+              href="https://github.com/yenting-biao/NTU-Classroom-Schedule-Helper/issues"
+              className="underline hover:text-blue-500"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Link
+            </Link>
           </footer>
         </ThemeProvider>
       </body>
