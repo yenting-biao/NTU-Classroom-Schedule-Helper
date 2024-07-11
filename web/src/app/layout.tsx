@@ -4,6 +4,8 @@ import "./globals.css";
 import { Suspense } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import React from "react";
 import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,35 +23,46 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} flex flex-col min-h-dvh`}>
-        <div className="p-5 flex flex-col items-center md:flex-row md:items-end gap-2">
-          <h1 className="text-4xl font-bold">台大教室課表小幫手</h1>
-          <p className="text-lg">讓你輕鬆查詢教室課表上的課程</p>
-        </div>
-        <div className="px-6">
-          更新時間：2024/07/10 18:00
-          <br />
-          注意事項與免責聲明：
-          <ul className="list-disc list-inside">
-            <li>
-              此網頁僅為個人專案，課程資料僅供參考，應以臺大課程網站之公告為準。
-            </li>
-            <li>
-              系所名稱的搜尋功能僅以教室課表上的課程識別碼之前三碼進行比對，可能有錯誤或缺漏，請以臺大課程網站為主。
-            </li>
-          </ul>
-        </div>
-        <Suspense fallback={<Skeleton />}>{children}</Suspense>
-        <footer className="p-5 pt-2 text-center text-sm">
-          Github Repo: 等我做好再公開{"><"}
-          {/* <Link
-            href="https://github.com/yenting-biao/NTU-Classroom-Schedule-Helper"
-            className="underline hover:text-blue-500"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            Link
-          </Link> */}
-        </footer>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem={true}
+          themes={["light", "dark"]}
+        >
+          <div className="p-5 mt-3 flex flex-col items-center md:flex-row md:items-end md:gap-2">
+            <h1 className="mt-10 scroll-m-20 pb-1 md:pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+              台大教室課表小幫手
+            </h1>
+            <p className="text-md pb-2 leading-7">
+              讓你輕鬆查詢教室課表上的課程
+            </p>
+          </div>
+          <div className="px-5">
+            資料更新時間：2024/07/11 17:00
+            <br />
+            <p className="mt-2">注意事項與免責聲明：</p>
+            <ul className="mb-2 ml-6 list-disc [&>li]:mt-2">
+              <li>
+                此網頁僅為個人專案，課程資料僅供參考，應以臺大課程網站之公告為準。
+              </li>
+              <li>
+                系所名稱的搜尋功能僅以教室課表上的課程識別碼之前三碼進行比對，可能有錯誤或缺漏，請以臺大課程網站為主。
+              </li>
+            </ul>
+          </div>
+          <Suspense fallback={<Skeleton />}>{children}</Suspense>
+          <footer className="p-5 pt-2 text-center text-sm ">
+            如果有發現任何問題或建議，歡迎至 GitHub 提出 Issue：
+            <Link
+              href="https://github.com/yenting-biao/NTU-Classroom-Schedule-Helper/issues"
+              className="underline hover:text-blue-500 "
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Link
+            </Link>
+          </footer>
+        </ThemeProvider>
       </body>
     </html>
   );
