@@ -101,11 +101,11 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Change skeleton theme based on system theme
   const [theme, setTheme] = useState({
     baseColor: "#",
     highlightColor: "#",
   });
-
   useEffect(() => {
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)",
