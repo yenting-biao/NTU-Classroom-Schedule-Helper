@@ -29,15 +29,19 @@ export default function RootLayout({
           enableSystem={true}
           themes={["light", "dark"]}
         >
-          <div className="p-5 flex flex-col items-center md:flex-row md:items-end gap-2">
-            <h1 className="text-4xl font-bold">台大教室課表小幫手</h1>
-            <p className="text-lg">讓你輕鬆查詢教室課表上的課程</p>
+          <div className="p-5 mt-3 flex flex-col items-center md:flex-row md:items-end md:gap-2">
+            <h1 className="mt-10 scroll-m-20 pb-1 md:pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+              台大教室課表小幫手
+            </h1>
+            <p className="text-md pb-2 leading-7">
+              讓你輕鬆查詢教室課表上的課程
+            </p>
           </div>
-          <div className="px-6">
+          <div className="px-5">
             資料更新時間：2024/07/11 17:00
             <br />
-            注意事項與免責聲明：
-            <ul className="list-disc list-inside">
+            <p className="mt-2">注意事項與免責聲明：</p>
+            <ul className="mb-2 ml-6 list-disc [&>li]:mt-2">
               <li>
                 此網頁僅為個人專案，課程資料僅供參考，應以臺大課程網站之公告為準。
               </li>
@@ -47,11 +51,11 @@ export default function RootLayout({
             </ul>
           </div>
           <Suspense fallback={<Skeleton />}>{children}</Suspense>
-          <footer className="p-5 pt-2 text-center text-sm">
+          <footer className="p-5 pt-2 text-center text-sm ">
             如果有發現任何問題或建議，歡迎至 GitHub 提出 Issue：
             <Link
               href="https://github.com/yenting-biao/NTU-Classroom-Schedule-Helper/issues"
-              className="underline hover:text-blue-500"
+              className="underline hover:text-blue-500 "
               target="_blank"
               rel="noreferrer noopener"
             >

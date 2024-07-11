@@ -147,7 +147,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex flex-col p-5 gap-5 flex-1">
+    <main className="flex flex-col p-5 pt-0 gap-5 flex-1">
       <SkeletonTheme
         baseColor={theme?.baseColor}
         highlightColor={theme?.highlightColor}
