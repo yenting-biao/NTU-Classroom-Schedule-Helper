@@ -29,8 +29,8 @@ export default function RootLayout({
           enableSystem={true}
           themes={["light", "dark"]}
         >
-          <div className="p-5 mt-3 flex flex-col items-center md:flex-row md:items-end md:gap-2">
-            <h1 className="mt-10 scroll-m-20 pb-1 md:pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+          <div className="p-5 mt-3 flex flex-col items-center ">
+            <h1 className="mt-10 scroll-m-20 pb-1 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
               台大教室課表小幫手
             </h1>
             <p className="text-md pb-2 leading-7">
