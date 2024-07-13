@@ -117,6 +117,7 @@ def timeToSession(time: str) -> str:
 def getPageCourseData(soup: BeautifulSoup) -> list[dict]:
     js = soup.find_all("script")[-4]
     js = js.text.split("\n")[2]
+    js = js.replace("\\/", "/")
     js = js.replace("var timeDT = ", "")
     js = js.replace(";", "")
     # turn js into a list of dictionaries
@@ -178,7 +179,6 @@ def crawlPage(url: str, allCourseInfo: AllCourses) -> None:
     roomData = getPageCourseData(soup)
 
     for data in roomData:
-        day = getDay(data["Item"])
         sessions = listSession()
 
         for session in sessions:

@@ -38,7 +38,7 @@ export default function RootLayout({
             </p>
           </div>
           <div className="px-5">
-            資料更新時間：2024/07/13 17:00
+            資料更新時間：每天 18:00
             <br />
             <p className="mt-2">注意事項與免責聲明：</p>
             <ul className="mb-2 ml-6 list-disc [&>li]:mt-2">
