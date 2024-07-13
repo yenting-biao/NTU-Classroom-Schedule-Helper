@@ -1,8 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-import json
 import re
+from os.path import dirname
+from datetime import datetime
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+import csv
+import dotenv
 
 
 class CourseTime:
@@ -227,6 +232,44 @@ def parse_schedule(schedule_str):
     return schedules
 
 
+def saveToDB(csvFileName: str):
+    uri = dotenv.dotenv_values()["MONGODB_URI"]
+    client = MongoClient(uri, server_api=ServerApi("1"))
+
+    try:
+        print(client.list_database_names())
+        db = client["ntu-class-schedule"]
+        collection = db["courses"]
+
+        # Delete all documents in the collection
+        collection.delete_many({})
+
+    except Exception as e:
+        print(e)
+
+    with open(csvFileName, "r") as file:
+        next(file)
+        data = [
+            {**row, "time": parse_schedule(row["time"])}
+            for row in csv.DictReader(
+                file, fieldnames=["id", "name", "instructor", "room", "time"]
+            )
+        ]
+        for row in data:
+            for time in row["time"]:
+                assert (
+                    time["weeks"] is not None
+                    and time["day"] is not None
+                    and time["start_time"] is not None
+                    and time["end_time"] is not None
+                )
+
+        try:
+            collection.insert_many(data)
+        except Exception as e:
+            print(e)
+
+
 def main():
     homePage = requests.get("https://gra206.aca.ntu.edu.tw/classrm/acarm/webcr-use-new")
     soup = BeautifulSoup(homePage.text, "html.parser")
@@ -244,11 +287,18 @@ def main():
 
     p = allCourseInfo.getAllCourses()
     p.sort(key=lambda x: x.id)
-    with open("courses.csv", "w") as f:
+
+    csvFileName = f"{dirname(__file__)}/csv/courses-{datetime.now().strftime('%Y-%m-%d_%H-%M')}.csv"
+    with open(
+        csvFileName,
+        "w",
+    ) as f:
         f.write("ID,CourseName,Instructor,Building,Time\n")
         for i in p:
             newTime = i.time.replace(",", "+")
             f.write(f"{i.id},{i.name},{i.instructor},{i.building},{newTime}\n")
+
+    saveToDB(csvFileName)
 
 
 if __name__ == "__main__":

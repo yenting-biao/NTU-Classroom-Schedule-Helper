@@ -36,7 +36,7 @@ export function CourseCard({
               href={`https://coursemap.aca.ntu.edu.tw/course_map_all/course.php?code=${
                 course.id.split(" ")[0]
               }+${course.id.split(" ")[1].split("-")[0]}`}
-              className="hover:text-blue-500 underline"
+              className="text-blue-600 dark:text-blue-400 hover:underline"
               target="_blank"
               rel="noreferrer noopener"
             >
