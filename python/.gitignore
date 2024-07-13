@@ -5,3 +5,4 @@ data.json
 .env.local
 
 __pycache__/
+csv/
