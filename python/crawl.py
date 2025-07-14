@@ -265,12 +265,11 @@ def saveToDB(csvFileName: str):
                     and time["end_time"] is not None
                 )
 
-        # try:
-        print(data)
-        collection.insert_many(data)
-        # except Exception as e:
-            # print("Error inserting data into MongoDB:")
-            # print(e)
+        try:
+            collection.insert_many(data)
+        except Exception as e:
+            print("Error inserting data into MongoDB:")
+            print(e)
 
 
 def main():
@@ -297,7 +296,7 @@ def main():
             "CourseName": i.name,
             "Instructor": i.instructor,
             "Building": i.building,
-            "Time": i.time.replace(" ", ","),
+            "Time": i.time.replace(",", "+"),
         }
         for i in p
     ]
