@@ -8,7 +8,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import csv
 import dotenv
-
+import pandas as pd
 
 class CourseTime:
     def __init__(self, sessions: list[str], day: int) -> None:
@@ -245,6 +245,7 @@ def saveToDB(csvFileName: str):
         collection.delete_many({})
 
     except Exception as e:
+        print("Error connecting to MongoDB:")
         print(e)
 
     with open(csvFileName, "r") as file:
@@ -267,6 +268,7 @@ def saveToDB(csvFileName: str):
         try:
             collection.insert_many(data)
         except Exception as e:
+            print("Error inserting data into MongoDB:")
             print(e)
 
 
@@ -275,7 +277,7 @@ def main():
     soup = BeautifulSoup(homePage.text, "html.parser")
     allCourseInfo = AllCourses()
 
-    semester = "1131"
+    semester = "1141"
     buildings = getAllBuildings(soup)
     buildingAndRooms = {building: getRoomByBuilding(building) for building in buildings}
 
@@ -287,16 +289,21 @@ def main():
 
     p = allCourseInfo.getAllCourses()
     p.sort(key=lambda x: x.id)
-
+    
+    p = [
+        {
+            "ID": i.id,
+            "CourseName": i.name,
+            "Instructor": i.instructor,
+            "Building": i.building,
+            "Time": i.time.replace(",", "+"),
+        }
+        for i in p
+    ]
+    p_df = pd.DataFrame(p)
     csvFileName = f"{dirname(__file__)}/csv/courses-{datetime.now().strftime('%Y-%m-%d_%H-%M')}.csv"
-    with open(
-        csvFileName,
-        "w",
-    ) as f:
-        f.write("ID,CourseName,Instructor,Building,Time\n")
-        for i in p:
-            newTime = i.time.replace(",", "+")
-            f.write(f"{i.id},{i.name},{i.instructor},{i.building},{newTime}\n")
+    
+    p_df.to_csv(csvFileName, index=False)
 
     saveToDB(csvFileName)
 
