@@ -277,7 +277,7 @@ def main():
     soup = BeautifulSoup(homePage.text, "html.parser")
     allCourseInfo = AllCourses()
 
-    semester = "1141"
+    semester = "1142"
     buildings = getAllBuildings(soup)
     buildingAndRooms = {building: getRoomByBuilding(building) for building in buildings}
 
