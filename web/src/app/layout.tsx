@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   description: "讓你輕鬆查詢教室課表上的課程",
 };
 
+export const revalidate = 0;
+
 async function getUpdateTime() {
   try {
     await client.connect();
@@ -25,7 +27,7 @@ async function getUpdateTime() {
     return doc?.time as string;
   } catch (e) {
     console.error(e);
-    return "無法取得更新時間";
+    return null;
   }
 }
 
