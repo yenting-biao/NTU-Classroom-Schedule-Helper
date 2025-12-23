@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 import re
 from os.path import dirname
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import csv
@@ -268,6 +268,18 @@ def saveToDB(csvFileName: str):
 
         try:
             collection.insert_many(data)
+            
+            # Update metadata with current time (UTC+8)
+            metadata_collection = db["metadata"]
+            tz = timezone(timedelta(hours=8))
+            now = datetime.now(tz)
+            metadata_collection.update_one(
+                {"type": "data_update_time"},
+                {"$set": {"time": now.strftime("%Y-%m-%d %H:%M")}},
+                upsert=True
+            )
+            print(f"Updated data update time to {now.strftime('%Y-%m-%d %H:%M')}")
+
         except Exception as e:
             print("Error inserting data into MongoDB:")
             print(e)

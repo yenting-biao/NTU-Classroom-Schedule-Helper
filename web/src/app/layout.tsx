@@ -7,6 +7,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import React from "react";
 import Link from "next/link";
+import { client } from "@/db/client";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,11 +16,26 @@ export const metadata: Metadata = {
   description: "讓你輕鬆查詢教室課表上的課程",
 };
 
-export default function RootLayout({
+async function getUpdateTime() {
+  try {
+    await client.connect();
+    const db = client.db("ntu-class-schedule");
+    const collection = db.collection("metadata");
+    const doc = await collection.findOne({ type: "data_update_time" });
+    return doc?.time as string;
+  } catch (e) {
+    console.error(e);
+    return "無法取得更新時間";
+  }
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const updateTime = await getUpdateTime();
+
   return (
     <html lang="en">
       <body className={`${inter.className} flex flex-col min-h-dvh`}>
@@ -38,7 +54,7 @@ export default function RootLayout({
             </p>
           </div>
           <div className="px-5">
-            資料更新時間：每天 18:00
+            資料更新時間：{updateTime || "每天 18:00"}
             <br />
             <p className="mt-2">注意事項與免責聲明：</p>
             <ul className="mb-2 ml-6 list-disc [&>li]:mt-2">

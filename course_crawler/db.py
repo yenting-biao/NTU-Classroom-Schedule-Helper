@@ -3,6 +3,8 @@ from pymongo.server_api import ServerApi
 import dotenv
 import csv
 from crawl import parse_schedule
+from datetime import datetime, timezone, timedelta
+
 
 
 def main():
@@ -39,6 +41,17 @@ def main():
 
         try:
             collection.insert_many(data)
+
+            # Update metadata
+            metadata_collection = db["metadata"]
+            tz = timezone(timedelta(hours=8))
+            now = datetime.now(tz)
+            metadata_collection.update_one(
+                {"type": "data_update_time"},
+                {"$set": {"time": now.strftime("%Y-%m-%d %H:%M")}},
+                upsert=True
+            )
+            print(f"Updated data update time to {now.strftime('%Y-%m-%d %H:%M')}")
         except Exception as e:
             print(e)
 
