@@ -9,6 +9,7 @@ from pymongo.server_api import ServerApi
 import csv
 import dotenv
 import pandas as pd
+import os
 
 class CourseTime:
     def __init__(self, sessions: list[str], day: int) -> None:
@@ -302,6 +303,7 @@ def main():
     ]
     p_df = pd.DataFrame(p)
     csvFileName = f"{dirname(__file__)}/csv/courses-{datetime.now().strftime('%Y-%m-%d_%H-%M')}.csv"
+    os.makedirs(os.path.dirname(csvFileName), exist_ok=True)
     
     p_df.to_csv(csvFileName, index=False)
 

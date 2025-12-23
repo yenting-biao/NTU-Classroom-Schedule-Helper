@@ -6,3 +6,5 @@ data.json
 
 __pycache__/
 csv/
+
+cron.log
