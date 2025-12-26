@@ -7,7 +7,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import React from "react";
 import Link from "next/link";
-import { client } from "@/db/client";
+import { clientPromise } from "@/db/client";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +20,7 @@ export const revalidate = 3600;
 
 async function getUpdateTime(): Promise<string | null> {
   try {
+    const client = await clientPromise;
     const db = client.db("ntu-class-schedule");
     const collection = db.collection("metadata");
     const doc = await collection.findOne({ type: "data_update_time" });

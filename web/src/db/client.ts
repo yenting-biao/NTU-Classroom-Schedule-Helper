@@ -32,6 +32,3 @@ if (process.env.NODE_ENV === "development") {
 
 // Export the promise for use in the application
 export { clientPromise };
-
-// Export the client for backward compatibility (but prefer using clientPromise)
-export { client };

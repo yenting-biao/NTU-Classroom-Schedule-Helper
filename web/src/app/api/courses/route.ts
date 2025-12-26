@@ -1,6 +1,6 @@
 import { Course } from "@/lib/types/db";
 import { courseSchema } from "@/lib/validators/courses";
-import { client } from "@/db/client";
+import { clientPromise } from "@/db/client";
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 
@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
   const first = req.nextUrl.searchParams.get("first");
   const last = req.nextUrl.searchParams.get("last");
   try {
+    const client = await clientPromise;
     const db = client.db("ntu-class-schedule");
     const collection = db.collection<Course>("courses");
 
