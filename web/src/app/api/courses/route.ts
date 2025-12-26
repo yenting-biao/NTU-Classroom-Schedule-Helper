@@ -17,7 +17,6 @@ export async function GET(req: NextRequest) {
   const first = req.nextUrl.searchParams.get("first");
   const last = req.nextUrl.searchParams.get("last");
   try {
-    await client.connect();
     const db = client.db("ntu-class-schedule");
     const collection = db.collection<Course>("courses");
 

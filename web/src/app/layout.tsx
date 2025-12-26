@@ -20,7 +20,6 @@ export const revalidate = 3600;
 
 async function getUpdateTime(): Promise<string | null> {
   try {
-    await client.connect();
     const db = client.db("ntu-class-schedule");
     const collection = db.collection("metadata");
     const doc = await collection.findOne({ type: "data_update_time" });
