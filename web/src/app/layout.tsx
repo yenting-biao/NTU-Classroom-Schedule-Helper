@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description: "讓你輕鬆查詢教室課表上的課程",
 };
 
-export const revalidate = 0;
+export const revalidate = 3600;
 
 async function getUpdateTime(): Promise<string | null> {
   try {
