@@ -3,12 +3,13 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 import re
 from os.path import dirname
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import csv
 import dotenv
 import pandas as pd
+import os
 
 class CourseTime:
     def __init__(self, sessions: list[str], day: int) -> None:
@@ -267,6 +268,18 @@ def saveToDB(csvFileName: str):
 
         try:
             collection.insert_many(data)
+            
+            # Update metadata with current time (UTC+8)
+            metadata_collection = db["metadata"]
+            tz = timezone(timedelta(hours=8))
+            now = datetime.now(tz)
+            metadata_collection.update_one(
+                {"type": "data_update_time"},
+                {"$set": {"time": now.strftime("%Y-%m-%d %H:%M")}},
+                upsert=True
+            )
+            print(f"Updated data update time to {now.strftime('%Y-%m-%d %H:%M')}")
+
         except Exception as e:
             print("Error inserting data into MongoDB:")
             print(e)
@@ -302,6 +315,7 @@ def main():
     ]
     p_df = pd.DataFrame(p)
     csvFileName = f"{dirname(__file__)}/csv/courses-{datetime.now().strftime('%Y-%m-%d_%H-%M')}.csv"
+    os.makedirs(os.path.dirname(csvFileName), exist_ok=True)
     
     p_df.to_csv(csvFileName, index=False)
 
